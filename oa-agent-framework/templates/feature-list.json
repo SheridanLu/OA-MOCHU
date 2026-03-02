@@ -1,0 +1,380 @@
+{
+  "project": "小型办公OA系统",
+  "version": "1.0.0",
+  "created_at": "2026-03-02",
+  "modules": [
+    {
+      "name": "用户认证",
+      "category": "auth",
+      "features": [
+        {
+          "id": "AUTH-001",
+          "description": "用户可以使用用户名密码登录",
+          "priority": "critical",
+          "steps": [
+            "打开登录页面",
+            "输入用户名 admin",
+            "输入密码 123456",
+            "点击登录按钮",
+            "验证跳转到首页",
+            "验证显示用户名"
+          ],
+          "passes": false
+        },
+        {
+          "id": "AUTH-002",
+          "description": "用户可以退出登录",
+          "priority": "high",
+          "steps": [
+            "以已登录状态进入系统",
+            "点击用户头像",
+            "点击退出登录",
+            "验证跳转到登录页"
+          ],
+          "passes": false
+        },
+        {
+          "id": "AUTH-003",
+          "description": "登录失败显示错误提示",
+          "priority": "high",
+          "steps": [
+            "打开登录页面",
+            "输入错误密码",
+            "点击登录",
+            "验证显示错误提示"
+          ],
+          "passes": false
+        },
+        {
+          "id": "AUTH-004",
+          "description": "记住登录状态7天",
+          "priority": "medium",
+          "steps": [
+            "登录时勾选记住我",
+            "关闭浏览器",
+            "重新打开",
+            "验证无需重新登录"
+          ],
+          "passes": false
+        }
+      ]
+    },
+    {
+      "name": "仪表盘/首页",
+      "category": "dashboard",
+      "features": [
+        {
+          "id": "DASH-001",
+          "description": "显示待办事项数量",
+          "priority": "high",
+          "steps": [
+            "登录进入首页",
+            "验证显示待办数量卡片",
+            "创建新待办",
+            "刷新页面验证数字更新"
+          ],
+          "passes": false
+        },
+        {
+          "id": "DASH-002",
+          "description": "显示今日日程",
+          "priority": "medium",
+          "steps": [
+            "进入首页",
+            "验证显示今日日程列表",
+            "点击日程可跳转详情"
+          ],
+          "passes": false
+        },
+        {
+          "id": "DASH-003",
+          "description": "显示未读通知数量",
+          "priority": "medium",
+          "steps": [
+            "有人发通知给我",
+            "进入首页",
+            "验证通知数量正确"
+          ],
+          "passes": false
+        },
+        {
+          "id": "DASH-004",
+          "description": "快捷操作入口",
+          "priority": "low",
+          "steps": [
+            "首页显示新建请假、报销等快捷按钮",
+            "点击可快速发起流程"
+          ],
+          "passes": false
+        }
+      ]
+    },
+    {
+      "name": "请假管理",
+      "category": "leave",
+      "features": [
+        {
+          "id": "LEAVE-001",
+          "description": "员工可以发起请假申请",
+          "priority": "critical",
+          "steps": [
+            "进入请假模块",
+            "点击新建请假",
+            "选择请假类型（年假/事假/病假）",
+            "选择开始和结束日期",
+            "填写请假原因",
+            "点击提交",
+            "验证显示提交成功",
+            "验证列表中出现该申请"
+          ],
+          "passes": false
+        },
+        {
+          "id": "LEAVE-002",
+          "description": "主管可以审批请假",
+          "priority": "critical",
+          "steps": [
+            "以主管身份登录",
+            "进入待审批列表",
+            "看到下属的请假申请",
+            "点击通过或拒绝",
+            "填写审批意见",
+            "验证状态更新"
+          ],
+          "passes": false
+        },
+        {
+          "id": "LEAVE-003",
+          "description": "查看我的请假记录",
+          "priority": "high",
+          "steps": [
+            "进入我的请假",
+            "验证显示所有历史记录",
+            "可以按状态筛选",
+            "可以查看详情"
+          ],
+          "passes": false
+        },
+        {
+          "id": "LEAVE-004",
+          "description": "请假时长自动计算",
+          "priority": "medium",
+          "steps": [
+            "选择请假日期",
+            "验证自动计算天数",
+            "排除周末和节假日"
+          ],
+          "passes": false
+        },
+        {
+          "id": "LEAVE-005",
+          "description": "请假余额显示",
+          "priority": "medium",
+          "steps": [
+            "进入请假模块",
+            "验证显示年假余额",
+            "请假后余额自动扣减"
+          ],
+          "passes": false
+        },
+        {
+          "id": "LEAVE-006",
+          "description": "撤销未审批的请假",
+          "priority": "low",
+          "steps": [
+            "提交请假后",
+            "审批前可以撤销",
+            "验证撤销成功"
+          ],
+          "passes": false
+        }
+      ]
+    },
+    {
+      "name": "报销管理",
+      "category": "expense",
+      "features": [
+        {
+          "id": "EXP-001",
+          "description": "员工可以提交报销申请",
+          "priority": "critical",
+          "steps": [
+            "进入报销模块",
+            "点击新建报销",
+            "选择报销类型（差旅/餐饮/交通等）",
+            "填写金额",
+            "上传发票图片",
+            "填写说明",
+            "提交",
+            "验证成功"
+          ],
+          "passes": false
+        },
+        {
+          "id": "EXP-002",
+          "description": "主管审批报销",
+          "priority": "critical",
+          "steps": [
+            "主管登录",
+            "进入待审批报销",
+            "查看报销详情",
+            "审批通过/拒绝",
+            "验证状态更新"
+          ],
+          "passes": false
+        },
+        {
+          "id": "EXP-003",
+          "description": "财务确认打款",
+          "priority": "high",
+          "steps": [
+            "财务登录",
+            "查看已通过审批的报销",
+            "确认打款",
+            "填写打款时间",
+            "验证状态变为已打款"
+          ],
+          "passes": false
+        },
+        {
+          "id": "EXP-004",
+          "description": "报销统计报表",
+          "priority": "medium",
+          "steps": [
+            "进入报销统计",
+            "查看按月份汇总",
+            "查看按类型汇总",
+            "导出Excel"
+          ],
+          "passes": false
+        }
+      ]
+    },
+    {
+      "name": "公告通知",
+      "category": "announcement",
+      "features": [
+        {
+          "id": "ANN-001",
+          "description": "管理员发布公告",
+          "priority": "high",
+          "steps": [
+            "管理员登录",
+            "进入公告管理",
+            "新建公告",
+            "填写标题和内容",
+            "选择发布范围（全公司/部门）",
+            "发布",
+            "验证成功"
+          ],
+          "passes": false
+        },
+        {
+          "id": "ANN-002",
+          "description": "员工查看公告列表",
+          "priority": "high",
+          "steps": [
+            "员工登录",
+            "进入公告模块",
+            "看到公告列表",
+            "点击查看详情"
+          ],
+          "passes": false
+        },
+        {
+          "id": "ANN-003",
+          "description": "公告已读未读状态",
+          "priority": "medium",
+          "steps": [
+            "发布新公告",
+            "员工未读时显示红点",
+            "点击查看后变为已读"
+          ],
+          "passes": false
+        }
+      ]
+    },
+    {
+      "name": "通讯录",
+      "category": "contacts",
+      "features": [
+        {
+          "id": "CONT-001",
+          "description": "查看员工列表",
+          "priority": "high",
+          "steps": [
+            "进入通讯录",
+            "看到所有员工",
+            "显示姓名、部门、职位、电话"
+          ],
+          "passes": false
+        },
+        {
+          "id": "CONT-002",
+          "description": "按部门筛选",
+          "priority": "medium",
+          "steps": [
+            "选择部门",
+            "只显示该部门员工"
+          ],
+          "passes": false
+        },
+        {
+          "id": "CONT-003",
+          "description": "搜索员工",
+          "priority": "medium",
+          "steps": [
+            "输入姓名或拼音",
+            "实时搜索结果"
+          ],
+          "passes": false
+        }
+      ]
+    },
+    {
+      "name": "权限管理",
+      "category": "permission",
+      "features": [
+        {
+          "id": "PERM-001",
+          "description": "角色管理（管理员/主管/员工）",
+          "priority": "critical",
+          "steps": [
+            "管理员进入角色管理",
+            "可以创建/编辑角色",
+            "可以分配权限"
+          ],
+          "passes": false
+        },
+        {
+          "id": "PERM-002",
+          "description": "部门管理",
+          "priority": "high",
+          "steps": [
+            "管理员进入部门管理",
+            "创建部门树形结构",
+            "设置部门主管"
+          ],
+          "passes": false
+        },
+        {
+          "id": "PERM-003",
+          "description": "员工账号管理",
+          "priority": "high",
+          "steps": [
+            "管理员创建员工账号",
+            "分配角色和部门",
+            "重置密码"
+          ],
+          "passes": false
+        }
+      ]
+    }
+  ],
+  "statistics": {
+    "total_features": 26,
+    "completed": 0,
+    "in_progress": 0,
+    "pending": 26
+  }
+}

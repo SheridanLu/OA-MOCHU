@@ -1,0 +1,20 @@
+{
+  "name": "engineering-oa-system",
+  "version": "1.0.0",
+  "description": "工程项目管理OA系统",
+  "scripts": {
+    "server": "node src/backend/index.js",
+    "client": "cd src/frontend && npm run dev",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "db:init": "node src/backend/init-db.js",
+    "init": "./scripts/init.sh"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^9.4.0",
+    "concurrently": "^8.2.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2"
+  }
+}
