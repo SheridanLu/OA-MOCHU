@@ -1,5 +1,5 @@
 /**
- * 审批流引擎 - 终版
+ * 审批流引擎 - 终版（支持动态节点和阅办阅知）
  */
 
 const express = require('express');
@@ -11,21 +11,27 @@ const db = new Database(path.join(__dirname, '../../../data/oa.db'));
 
 // 获取用户角色
 function getUserRole(userId) {
-  const user = db.prepare('SELECT r.code as role_code FROM users u JOIN roles r ON u.role_id = r.id WHERE u.id = ?').get(userId);
-  return user?.role_code;
+  const user = db.prepare(`
+    SELECT r.code as role_code, r.name as role_name
+    FROM users u 
+    JOIN roles r ON u.role_id = r.id 
+    WHERE u.id = ?
+  `).get(userId);
+  return user;
 }
 
-// 检查是否是当前审批人
-function isCurrentApprover(approval, userId) {
-  const roleCode = getUserRole(userId);
-  const step = db.prepare(`
-    SELECT afs.* FROM approval_flow_steps afs
-    WHERE afs.flow_id = ? AND afs.step_number = ?
-  `).get(approval.flow_id, approval.current_step);
-  return step?.role_code === roleCode;
+// 获取部门主管
+function getDepartmentManager(userId) {
+  const user = db.prepare(`
+    SELECT d.manager_id 
+    FROM users u 
+    JOIN departments d ON u.department_id = d.id 
+    WHERE u.id = ?
+  `).get(userId);
+  return user?.manager_id;
 }
 
-// GET 待办列表
+// GET 待办列表（支持阅办/阅知）
 router.get('/pending', (req, res) => {
   try {
     const { userId, roleCode } = req.query;
@@ -34,10 +40,13 @@ router.get('/pending', (req, res) => {
       SELECT a.*, af.name as flow_name,
         CASE a.business_type
           WHEN 'project' THEN (SELECT name FROM projects WHERE id = a.business_id)
+          WHEN 'project_convert' THEN (SELECT name FROM projects WHERE id = a.business_id)
           WHEN 'contract_income' THEN (SELECT name FROM contracts WHERE id = a.business_id)
           WHEN 'contract_expense' THEN (SELECT name FROM contracts WHERE id = a.business_id)
           WHEN 'change' THEN (SELECT reason FROM change_requests WHERE id = a.business_id)
           WHEN 'payment' THEN (SELECT code FROM payment_applications WHERE id = a.business_id)
+          WHEN 'hr_onboard' THEN (SELECT name FROM users WHERE id = a.business_id)
+          WHEN 'hr_resign' THEN (SELECT name FROM users WHERE id = a.business_id)
           ELSE NULL
         END as business_name
       FROM approvals a
@@ -58,7 +67,10 @@ router.get('/pending', (req, res) => {
     
     sql += ' ORDER BY a.created_at DESC';
     res.json(db.prepare(sql).all(...params));
-  } catch (e) { console.error(e); res.status(500).json({ error: '获取失败' }); }
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: '获取失败' });
+  }
 });
 
 // GET 已办列表
@@ -73,7 +85,37 @@ router.get('/done', (req, res) => {
       WHERE ar.approver_id = ?
       ORDER BY ar.created_at DESC
     `).all(userId));
-  } catch (e) { res.status(500).json({ error: '获取失败' }); }
+  } catch (e) {
+    res.status(500).json({ error: '获取失败' });
+  }
+});
+
+// GET 我发起的审批
+router.get('/my-applications', (req, res) => {
+  try {
+    const { userId } = req.query;
+    res.json(db.prepare(`
+      SELECT a.*, af.name as flow_name,
+        CASE a.business_type
+          WHEN 'project' THEN (SELECT name FROM projects WHERE id = a.business_id)
+          WHEN 'contract_income' THEN (SELECT name FROM contracts WHERE id = a.business_id)
+          WHEN 'contract_expense' THEN (SELECT name FROM contracts WHERE id = a.business_id)
+          WHEN 'change' THEN (SELECT reason FROM change_requests WHERE id = a.business_id)
+          WHEN 'payment' THEN (SELECT code FROM payment_applications WHERE id = a.business_id)
+          ELSE NULL
+        END as business_name
+      FROM approvals a
+      JOIN approval_flows af ON a.flow_id = af.id
+      JOIN projects p ON (
+        (a.business_type = 'project' AND p.id = a.business_id) OR
+        (a.business_type = 'project_convert' AND p.id = a.business_id)
+      )
+      WHERE p.created_by = ?
+      ORDER BY a.created_at DESC
+    `).all(userId));
+  } catch (e) {
+    res.status(500).json({ error: '获取失败' });
+  }
 });
 
 // GET 审批详情
@@ -105,7 +147,9 @@ router.get('/:id', (req, res) => {
     `).all(req.params.id);
     
     res.json({ ...approval, steps, records });
-  } catch (e) { res.status(500).json({ error: '获取失败' }); }
+  } catch (e) {
+    res.status(500).json({ error: '获取失败' });
+  }
 });
 
 // POST 审批通过
@@ -142,7 +186,10 @@ router.post('/:id/approve', (req, res) => {
       
       res.json({ message: '审批完成' });
     }
-  } catch (e) { console.error(e); res.status(500).json({ error: '操作失败' }); }
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: '操作失败' });
+  }
 });
 
 // POST 审批拒绝
@@ -166,7 +213,9 @@ router.post('/:id/reject', (req, res) => {
     updateBusinessStatus(approval.business_type, approval.business_id, 'rejected');
     
     res.json({ message: '已拒绝' });
-  } catch (e) { res.status(500).json({ error: '操作失败' }); }
+  } catch (e) {
+    res.status(500).json({ error: '操作失败' });
+  }
 });
 
 // 更新业务状态
@@ -178,15 +227,20 @@ function updateBusinessStatus(businessType, businessId, status) {
     'contract_expense': 'contracts',
     'change': 'change_requests',
     'payment': 'payment_applications',
-    'hr_onboard': 'users'
+    'hr_onboard': 'users',
+    'hr_resign': 'users'
   };
   
   const table = tableMap[businessType];
   if (table) {
     if (businessType === 'project' && status === 'approved') {
       db.prepare('UPDATE projects SET status = ? WHERE id = ?').run('active', businessId);
+    } else if (businessType === 'project_convert' && status === 'approved') {
+      db.prepare('UPDATE projects SET status = ? WHERE id = ?').run('active', businessId);
     } else if (businessType === 'hr_onboard' && status === 'approved') {
       db.prepare('UPDATE users SET status = ? WHERE id = ?').run('active', businessId);
+    } else if (businessType === 'hr_resign' && status === 'approved') {
+      db.prepare('UPDATE users SET status = ? WHERE id = ?').run('resigned', businessId);
     } else {
       db.prepare(`UPDATE ${table} SET status = ? WHERE id = ?`).run(status, businessId);
     }
@@ -197,7 +251,9 @@ function updateBusinessStatus(businessType, businessId, status) {
 router.get('/flows', (req, res) => {
   try {
     res.json(db.prepare('SELECT * FROM approval_flows ORDER BY business_type').all());
-  } catch (e) { res.status(500).json({ error: '获取失败' }); }
+  } catch (e) {
+    res.status(500).json({ error: '获取失败' });
+  }
 });
 
 // GET 审批流步骤
@@ -210,7 +266,9 @@ router.get('/flows/:flowId/steps', (req, res) => {
       WHERE afs.flow_id = ?
       ORDER BY afs.step_number
     `).all(req.params.flowId));
-  } catch (e) { res.status(500).json({ error: '获取失败' }); }
+  } catch (e) {
+    res.status(500).json({ error: '获取失败' });
+  }
 });
 
 module.exports = router;
