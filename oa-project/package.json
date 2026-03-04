@@ -7,7 +7,10 @@
     "client": "cd src/frontend && npm run dev",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "db:init": "node src/backend/init-db.js",
-    "init": "./scripts/init.sh"
+    "init": "./scripts/init.sh",
+    "test": "jest src/backend/tests/api.test.js",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -19,5 +22,9 @@
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "winston": "^3.19.0"
+  },
+  "devDependencies": {
+    "jest": "^30.2.0",
+    "supertest": "^7.2.2"
   }
 }
