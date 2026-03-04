@@ -1,5 +1,5 @@
 /**
- * OA 系统后端入口 - 终版
+ * OA 系统后端入口 - 终版（含资产、报销、社保）
  */
 
 const express = require('express');
@@ -27,6 +27,9 @@ app.use('/api/hr', require('./routes/hr'));
 app.use('/api/salary', require('./routes/salary'));
 app.use('/api/dashboard', require('./routes/dashboard'));
 app.use('/api/completion', require('./routes/completion'));
+app.use('/api/assets', require('./routes/assets'));
+app.use('/api/expenses', require('./routes/expenses'));
+app.use('/api/social-insurance', require('./routes/social-insurance'));
 
 // 健康检查
 app.get('/api/health', (req, res) => res.json({ status: 'ok', time: new Date().toISOString() }));

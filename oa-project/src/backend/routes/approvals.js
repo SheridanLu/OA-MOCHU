@@ -13,8 +13,8 @@ const db = new Database(path.join(__dirname, '../../../data/oa.db'));
 function getUserRole(userId) {
   const user = db.prepare(`
     SELECT r.code as role_code, r.name as role_name
-    FROM users u 
-    JOIN roles r ON u.role_id = r.id 
+    FROM users u
+    JOIN roles r ON u.role_id = r.id
     WHERE u.id = ?
   `).get(userId);
   return user;
@@ -23,9 +23,9 @@ function getUserRole(userId) {
 // 获取部门主管
 function getDepartmentManager(userId) {
   const user = db.prepare(`
-    SELECT d.manager_id 
-    FROM users u 
-    JOIN departments d ON u.department_id = d.id 
+    SELECT d.manager_id
+    FROM users u
+    JOIN departments d ON u.department_id = d.id
     WHERE u.id = ?
   `).get(userId);
   return user?.manager_id;
@@ -35,7 +35,7 @@ function getDepartmentManager(userId) {
 router.get('/pending', (req, res) => {
   try {
     const { userId, roleCode } = req.query;
-    
+
     let sql = `
       SELECT a.*, af.name as flow_name,
         CASE a.business_type
@@ -53,18 +53,18 @@ router.get('/pending', (req, res) => {
       JOIN approval_flows af ON a.flow_id = af.id
       WHERE a.status = 'pending'
     `;
-    
+
     const params = [];
     if (roleCode) {
       sql += ` AND EXISTS (
-        SELECT 1 FROM approval_flow_steps afs 
-        WHERE afs.flow_id = a.flow_id 
-        AND afs.step_number = a.current_step 
+        SELECT 1 FROM approval_flow_steps afs
+        WHERE afs.flow_id = a.flow_id
+        AND afs.step_number = a.current_step
         AND afs.role_code = ?
       )`;
       params.push(roleCode);
     }
-    
+
     sql += ' ORDER BY a.created_at DESC';
     res.json(db.prepare(sql).all(...params));
   } catch (e) {
@@ -127,9 +127,9 @@ router.get('/:id', (req, res) => {
       JOIN approval_flows af ON a.flow_id = af.id
       WHERE a.id = ?
     `).get(req.params.id);
-    
+
     if (!approval) return res.status(404).json({ error: '审批不存在' });
-    
+
     const steps = db.prepare(`
       SELECT afs.*, r.name as role_name
       FROM approval_flow_steps afs
@@ -137,7 +137,7 @@ router.get('/:id', (req, res) => {
       WHERE afs.flow_id = ?
       ORDER BY afs.step_number
     `).all(approval.flow_id);
-    
+
     const records = db.prepare(`
       SELECT ar.*, u.name as approver_name
       FROM approval_records ar
@@ -145,7 +145,7 @@ router.get('/:id', (req, res) => {
       WHERE ar.approval_id = ?
       ORDER BY ar.step_number
     `).all(req.params.id);
-    
+
     res.json({ ...approval, steps, records });
   } catch (e) {
     res.status(500).json({ error: '获取失败' });
@@ -157,22 +157,22 @@ router.post('/:id/approve', (req, res) => {
   try {
     const { userId, comment } = req.body;
     const approval = db.prepare('SELECT * FROM approvals WHERE id = ?').get(req.params.id);
-    
+
     if (!approval) return res.status(404).json({ error: '审批不存在' });
     if (approval.status !== 'pending') return res.status(400).json({ error: '该审批已处理' });
-    
+
     // 记录审批
     db.prepare(`
       INSERT INTO approval_records (approval_id, step_number, approver_id, action, comment)
       VALUES (?, ?, ?, 'approve', ?)
     `).run(req.params.id, approval.current_step, userId, comment);
-    
+
     // 检查是否还有下一步
     const nextStep = db.prepare(`
-      SELECT * FROM approval_flow_steps 
+      SELECT * FROM approval_flow_steps
       WHERE flow_id = ? AND step_number = ?
     `).get(approval.flow_id, approval.current_step + 1);
-    
+
     if (nextStep) {
       // 进入下一步
       db.prepare('UPDATE approvals SET current_step = ? WHERE id = ?').run(approval.current_step + 1, req.params.id);
@@ -180,10 +180,10 @@ router.post('/:id/approve', (req, res) => {
     } else {
       // 审批完成
       db.prepare('UPDATE approvals SET status = ?, completed_at = DATETIME("now") WHERE id = ?').run('approved', req.params.id);
-      
+
       // 更新业务状态
       updateBusinessStatus(approval.business_type, approval.business_id, 'approved');
-      
+
       res.json({ message: '审批完成' });
     }
   } catch (e) {
@@ -197,21 +197,21 @@ router.post('/:id/reject', (req, res) => {
   try {
     const { userId, comment } = req.body;
     const approval = db.prepare('SELECT * FROM approvals WHERE id = ?').get(req.params.id);
-    
+
     if (!approval) return res.status(404).json({ error: '审批不存在' });
-    
+
     // 记录审批
     db.prepare(`
       INSERT INTO approval_records (approval_id, step_number, approver_id, action, comment)
       VALUES (?, ?, ?, 'reject', ?)
     `).run(req.params.id, approval.current_step, userId, comment);
-    
+
     // 拒绝
     db.prepare('UPDATE approvals SET status = ?, completed_at = DATETIME("now") WHERE id = ?').run('rejected', req.params.id);
-    
+
     // 更新业务状态
     updateBusinessStatus(approval.business_type, approval.business_id, 'rejected');
-    
+
     res.json({ message: '已拒绝' });
   } catch (e) {
     res.status(500).json({ error: '操作失败' });
@@ -230,7 +230,7 @@ function updateBusinessStatus(businessType, businessId, status) {
     'hr_onboard': 'users',
     'hr_resign': 'users'
   };
-  
+
   const table = tableMap[businessType];
   if (table) {
     if (businessType === 'project' && status === 'approved') {
