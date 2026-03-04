@@ -1,14 +1,289 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* 移动端适配 */
+
+/* 全局响应式 */
+@media screen and (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+  
+  .ant-layout {
+    min-height: 100vh;
+  }
+  
+  /* 侧边栏折叠 */
+  .ant-layout-sider {
+    position: fixed !important;
+    left: -200px;
+    z-index: 1000;
+    transition: left 0.3s ease;
+  }
+  
+  .ant-layout-sider.mobile-open {
+    left: 0;
+  }
+  
+  .ant-layout-sider-trigger {
+    display: none;
+  }
+  
+  /* 主内容区 */
+  .ant-layout-content {
+    margin: 8px !important;
+    padding: 12px !important;
+  }
+  
+  /* 表格响应式 */
+  .ant-table {
+    font-size: 12px;
+  }
+  
+  .ant-table-thead > tr > th {
+    padding: 8px 4px;
+    font-size: 12px;
+  }
+  
+  .ant-table-tbody > tr > td {
+    padding: 8px 4px;
+    font-size: 12px;
+  }
+  
+  /* 表格横向滚动 */
+  .ant-table-wrapper {
+    overflow-x: auto;
+  }
+  
+  .ant-table-wrapper .ant-table {
+    min-width: 600px;
+  }
+  
+  /* 卡片 */
+  .ant-card-head {
+    padding: 12px;
+    min-height: auto;
+  }
+  
+  .ant-card-head-title {
+    font-size: 14px;
+    padding: 8px 0;
+  }
+  
+  .ant-card-body {
+    padding: 12px;
+  }
+  
+  /* 表单 */
+  .ant-form-item {
+    margin-bottom: 16px;
+  }
+  
+  .ant-form-item-label {
+    padding-bottom: 4px;
+  }
+  
+  .ant-form-item-label > label {
+    font-size: 13px;
+  }
+  
+  .ant-input, .ant-select-selector, .ant-picker {
+    font-size: 14px;
+  }
+  
+  /* 按钮 */
+  .ant-btn {
+    padding: 4px 12px;
+    font-size: 13px;
+  }
+  
+  .ant-btn-sm {
+    padding: 2px 8px;
+    font-size: 12px;
+  }
+  
+  /* 弹窗 */
+  .ant-modal {
+    max-width: calc(100vw - 16px);
+    margin: 8px auto;
+  }
+  
+  .ant-modal-content {
+    padding: 12px;
+  }
+  
+  .ant-modal-header {
+    padding: 8px 0;
+  }
+  
+  .ant-modal-body {
+    padding: 12px 0;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+  
+  .ant-modal-footer {
+    padding: 8px 0;
+  }
+  
+  /* 分页 */
+  .ant-pagination {
+    text-align: center;
+  }
+  
+  .ant-pagination-item, .ant-pagination-prev, .ant-pagination-next {
+    min-width: 28px;
+    height: 28px;
+    line-height: 28px;
+  }
+  
+  /* 标签页 */
+  .ant-tabs-nav {
+    margin-bottom: 12px;
+  }
+  
+  .ant-tabs-tab {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+  
+  /* 统计卡片 */
+  .ant-statistic {
+    margin-bottom: 12px;
+  }
+  
+  .ant-statistic-title {
+    font-size: 12px;
+  }
+  
+  .ant-statistic-content {
+    font-size: 20px;
+  }
+  
+  /* 下拉菜单 */
+  .ant-dropdown-menu {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  
+  /* 搜索框 */
+  .ant-input-search .ant-input {
+    font-size: 14px;
+  }
+  
+  /* 日期选择器 */
+  .ant-picker-dropdown {
+    max-width: calc(100vw - 32px);
+  }
+  
+  /* 消息提示 */
+  .ant-message {
+    top: 50px;
+  }
 }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background: #f0f2f5;
+/* 超小屏幕 (< 480px) */
+@media screen and (max-width: 480px) {
+  .ant-card-head-extra {
+    float: none;
+    margin-top: 8px;
+  }
+  
+  .ant-space {
+    flex-wrap: wrap;
+  }
+  
+  .ant-table-wrapper .ant-table {
+    min-width: 400px;
+  }
+  
+  /* 隐藏不重要的列 */
+  .ant-table-cell-hide-mobile {
+    display: none;
+  }
 }
 
-#root {
-  min-height: 100vh;
+/* 移动端菜单按钮 */
+.mobile-menu-btn {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 999;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #1890ff;
+  color: white;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  cursor: pointer;
+  font-size: 24px;
+}
+
+@media screen and (max-width: 768px) {
+  .mobile-menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* 遮罩层 */
+.mobile-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 999;
+}
+
+.mobile-overlay.show {
+  display: block;
+}
+
+/* Header 移动端适配 */
+@media screen and (max-width: 768px) {
+  .ant-layout-header {
+    padding: 0 12px !important;
+    height: auto !important;
+    line-height: 1.5 !important;
+    padding: 8px 12px !important;
+  }
+  
+  .ant-layout-header > span:first-child {
+    font-size: 13px;
+  }
+  
+  .ant-avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+  
+  .ant-dropdown-trigger span:last-child {
+    display: none;
+  }
+}
+
+/* Tabs 滚动 */
+@media screen and (max-width: 768px) {
+  .ant-tabs-nav-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .ant-tabs-nav-list {
+    white-space: nowrap;
+  }
+}
+
+/* 表格操作列 */
+@media screen and (max-width: 768px) {
+  .ant-table-cell-actions {
+    position: sticky;
+    right: 0;
+    background: white;
+    box-shadow: -2px 0 6px rgba(0,0,0,0.1);
+  }
 }
