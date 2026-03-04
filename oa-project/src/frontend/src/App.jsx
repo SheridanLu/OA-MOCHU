@@ -16,6 +16,7 @@ import DepartmentPage from './pages/DepartmentPage'
 import ApprovalPage from './pages/ApprovalPage'
 import QualificationPage from './pages/QualificationPage'
 import SalaryPage from './pages/SalaryPage'
+import CompletionPage from './pages/CompletionPage'
 
 const { Header, Sider, Content } = Layout
 export const AuthContext = createContext(null)
@@ -45,6 +46,7 @@ function MainLayout({ children }) {
     { key: '/payments', label: '💰 工程款申请' },
     { key: '/materials', label: '📦 物资管理' },
     { key: '/changes', label: '🔄 变更签证' },
+    { key: '/completion', label: '🏁 竣工管理' },
     { key: '/qualifications', label: '🎖️ 资质预警' },
     { key: '/salary', label: '💵 工资管理' },
   ]
@@ -103,6 +105,7 @@ function App() {
         <Route path="/payments" element={user ? <MainLayout><PaymentPage /></MainLayout> : <Navigate to="/login" />} />
         <Route path="/materials" element={user ? <MainLayout><MaterialPage /></MainLayout> : <Navigate to="/login" />} />
         <Route path="/changes" element={user ? <MainLayout><ChangePage /></MainLayout> : <Navigate to="/login" />} />
+        <Route path="/completion" element={user ? <MainLayout><CompletionPage /></MainLayout> : <Navigate to="/login" />} />
         <Route path="/qualifications" element={user ? <MainLayout><QualificationPage /></MainLayout> : <Navigate to="/login" />} />
         <Route path="/salary" element={user ? <MainLayout><SalaryPage /></MainLayout> : <Navigate to="/login" />} />
         <Route path="/departments" element={user ? <MainLayout><DepartmentPage /></MainLayout> : <Navigate to="/login" />} />

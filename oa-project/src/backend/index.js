@@ -26,6 +26,7 @@ app.use('/api/approvals', require('./routes/approvals'));
 app.use('/api/hr', require('./routes/hr'));
 app.use('/api/salary', require('./routes/salary'));
 app.use('/api/dashboard', require('./routes/dashboard'));
+app.use('/api/completion', require('./routes/completion'));
 
 // 健康检查
 app.get('/api/health', (req, res) => res.json({ status: 'ok', time: new Date().toISOString() }));
