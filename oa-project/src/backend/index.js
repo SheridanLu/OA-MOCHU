@@ -1,16 +1,29 @@
 /**
- * OA 系统后端入口 - 终版（含资产、报销、社保）
+ * OA 系统后端入口 - 终版（含资产、报销、社保、安全加固）
  */
 
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const { 
+  helmet, 
+  sqlInjectionCheck, 
+  xssFilter, 
+  rateLimit, 
+  logRequest 
+} = require('./middleware/security');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// 安全中间件
+app.use(helmet());
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
+app.use(sqlInjectionCheck);
+app.use(xssFilter);
+app.use(rateLimit(100, 60000)); // 100次/分钟
+app.use(logRequest);
 
 // API 路由
 app.use('/api/auth', require('./routes/auth'));
