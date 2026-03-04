@@ -1,8 +1,50 @@
+# /.gitignore
+
+# 依赖
 node_modules/
-data/
-uploads/
+package-lock.json
+
+# 构建输出
 dist/
-.env
+build/
 *.log
+
+# 环境变量
+.env
+.env.local
+.env.production
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 系统文件
 .DS_Store
-claude-code-repo/
+Thumbs.db
+
+# 日志
+logs/
+*.log
+npm-debug.log*
+
+# 测试
+coverage/
+.nyc_output/
+
+# 临时文件
+tmp/
+temp/
+*.tmp
+
+# 备份文件
+*.bak
+*.backup
+
+# 数据库（开发环境保留）
+# data/oa.db
+
+# 缓存
+.cache/
