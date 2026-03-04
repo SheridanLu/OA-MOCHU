@@ -4,6 +4,7 @@
 
 const express = require('express');
 const cors = require('cors');
+const compression = require('compression');
 const path = require('path');
 const { 
   helmet, 
@@ -16,7 +17,8 @@ const {
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// 安全中间件
+// 安全+性能中间件
+app.use(compression()); // Gzip压缩
 app.use(helmet());
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
