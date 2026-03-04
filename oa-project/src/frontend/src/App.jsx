@@ -13,6 +13,9 @@ import MaterialPage from './pages/MaterialPage'
 import ChangePage from './pages/ChangePage'
 import UserPage from './pages/UserPage'
 import DepartmentPage from './pages/DepartmentPage'
+import ApprovalPage from './pages/ApprovalPage'
+import QualificationPage from './pages/QualificationPage'
+import SalaryPage from './pages/SalaryPage'
 
 const { Header, Sider, Content } = Layout
 export const AuthContext = createContext(null)
@@ -35,15 +38,18 @@ function MainLayout({ children }) {
   
   const menus = [
     { key: '/', label: '📊 工作台' },
+    { key: '/approvals', label: '📝 我的审批' },
     { key: '/projects', label: '📁 项目立项' },
     { key: '/contracts', label: '📄 合同管理' },
     { key: '/statements', label: '📑 工程对账' },
     { key: '/payments', label: '💰 工程款申请' },
     { key: '/materials', label: '📦 物资管理' },
     { key: '/changes', label: '🔄 变更签证' },
+    { key: '/qualifications', label: '🎖️ 资质预警' },
+    { key: '/salary', label: '💵 工资管理' },
   ]
   
-  if (user?.role === 'admin') {
+  if (user?.role === 'admin' || user?.role_code === 'ceo') {
     menus.push({ key: '/departments', label: '🏢 部门管理' })
     menus.push({ key: '/users', label: '👥 用户管理' })
   }
@@ -90,12 +96,15 @@ function App() {
       <Routes>
         <Route path="/login" element={user ? <Navigate to="/" /> : <LoginPage />} />
         <Route path="/" element={user ? <MainLayout><DashboardPage /></MainLayout> : <Navigate to="/login" />} />
+        <Route path="/approvals" element={user ? <MainLayout><ApprovalPage /></MainLayout> : <Navigate to="/login" />} />
         <Route path="/projects" element={user ? <MainLayout><ProjectPage /></MainLayout> : <Navigate to="/login" />} />
         <Route path="/contracts" element={user ? <MainLayout><ContractPage /></MainLayout> : <Navigate to="/login" />} />
         <Route path="/statements" element={user ? <MainLayout><StatementPage /></MainLayout> : <Navigate to="/login" />} />
         <Route path="/payments" element={user ? <MainLayout><PaymentPage /></MainLayout> : <Navigate to="/login" />} />
         <Route path="/materials" element={user ? <MainLayout><MaterialPage /></MainLayout> : <Navigate to="/login" />} />
         <Route path="/changes" element={user ? <MainLayout><ChangePage /></MainLayout> : <Navigate to="/login" />} />
+        <Route path="/qualifications" element={user ? <MainLayout><QualificationPage /></MainLayout> : <Navigate to="/login" />} />
+        <Route path="/salary" element={user ? <MainLayout><SalaryPage /></MainLayout> : <Navigate to="/login" />} />
         <Route path="/departments" element={user ? <MainLayout><DepartmentPage /></MainLayout> : <Navigate to="/login" />} />
         <Route path="/users" element={user ? <MainLayout><UserPage /></MainLayout> : <Navigate to="/login" />} />
         <Route path="*" element={<Navigate to="/" />} />
