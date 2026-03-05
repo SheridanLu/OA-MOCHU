@@ -398,12 +398,6 @@ function ProjectPage() {
           </Form.Item>
         </Form>
       </Modal>
-    </div>
-  )
-}
-
-export default ProjectPage
-
       {/* 项目详情弹窗 */}
       <ProjectDetailModal
         visible={detailModal}
@@ -413,5 +407,6 @@ export default ProjectPage
     </div>
   )
 }
+
 
 export default ProjectPage
