@@ -450,3 +450,34 @@ module.exports = router;
   - tech_docs: 工程档案及技术资料
 
 ================================================================================
+
+================================================================================
+2026-03-05 18:58 [全能大龙虾] TASK-113 完成
+================================================================================
+✅ 完成内容：
+  [x] 项目预算管理（3种类型：投标前/投标/最终）
+  [x] Excel导入功能
+  [x] 项目采购清单
+  [x] 材料价格信息库
+  [x] 价格比对提醒
+
+✅ API端点：
+  - GET /api/budgets
+  - POST /api/budgets
+  - POST /api/budgets/import（Excel导入）
+  - GET /api/budgets/purchase-list
+  - POST /api/budgets/purchase-list
+  - GET /api/budgets/price-library
+  - POST /api/budgets/price-library
+  - POST /api/budgets/compare-price
+
+✅ 数据表：
+  - project_budgets（项目预算）
+  - material_price_library（材料价格库）
+  - project_purchase_lists（项目采购清单）
+
+✅ 业务规则：
+  - 自动计算基准价（历史最低价）
+  - 高于基准价时提醒采购员确认
+
+================================================================================
