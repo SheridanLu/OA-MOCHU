@@ -63,7 +63,7 @@ ALTER TABLE users ADD COLUMN salary_flag BOOLEAN DEFAULT 0;
 
 ---
 
-### TASK-111: 合同模板管理 [ ]
+### TASK-111: 合同模板管理 [x]
 **需求**：
 1. **实体项目收入合同模板录入**
    - 甲方拟定：采购员→总经理
