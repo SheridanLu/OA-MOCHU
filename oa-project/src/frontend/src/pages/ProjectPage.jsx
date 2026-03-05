@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Card, Table, Button, Space, Modal, Form, Input, InputNumber, Select, DatePicker, message, Tag, Divider, Row, Col, Tooltip } from 'antd'
-import { PlusOutlined, ReloadOutlined, InfoCircleOutlined } from '@ant-design/icons'
+import { PlusOutlined, ReloadOutlined, InfoCircleOutlined, EyeOutlined } from '@ant-design/icons'
 import axios from 'axios'
 import dayjs from 'dayjs'
+import ProjectDetailModal from '../components/ProjectDetailModal'
 
 const { Option } = Select
 const { TextArea } = Input
@@ -14,6 +15,8 @@ function ProjectPage() {
   const [virtualModal, setVirtualModal] = useState(false)
   const [suspendModal, setSuspendModal] = useState(false)
   const [convertModal, setConvertModal] = useState(false)
+  const [detailModal, setDetailModal] = useState(false)
+  const [selectedProjectId, setSelectedProjectId] = useState(null)
   const [entityForm] = Form.useForm()
   const [virtualForm] = Form.useForm()
   const [suspendForm] = Form.useForm()
@@ -21,6 +24,14 @@ function ProjectPage() {
   const [entityProjects, setEntityProjects] = useState([])
   const [currentProject, setCurrentProject] = useState(null)
   const [paymentPlans, setPaymentPlans] = useState([])
+
+  const [detailModal, setDetailModal] = useState(false)
+  const [selectedProjectId, setSelectedProjectId] = useState(null)
+
+  const handleViewDetail = (projectId) => {
+    setSelectedProjectId(projectId)
+    setDetailModal(true)
+  }
   const user = JSON.parse(localStorage.getItem('user') || '{}')
 
   useEffect(() => { load() }, [])
@@ -75,6 +86,12 @@ function ProjectPage() {
     } catch (e) {
       message.error(e.response?.data?.error || '创建失败')
     }
+  }
+
+  // 查看项目详情
+  const handleViewDetail = (projectId) => {
+    setSelectedProjectId(projectId)
+    setDetailModal(true)
   }
 
   // 项目中止
