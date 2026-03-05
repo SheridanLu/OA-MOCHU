@@ -15,6 +15,8 @@ function ProjectPage() {
   const [virtualModal, setVirtualModal] = useState(false)
   const [suspendModal, setSuspendModal] = useState(false)
   const [convertModal, setConvertModal] = useState(false)
+  const [detailModal, setDetailModal] = useState(false)
+  const [selectedProjectId, setSelectedProjectId] = useState(null)
   const [entityForm] = Form.useForm()
   const [virtualForm] = Form.useForm()
   const [suspendForm] = Form.useForm()
@@ -23,7 +25,13 @@ function ProjectPage() {
   const [currentProject, setCurrentProject] = useState(null)
   const [paymentPlans, setPaymentPlans] = useState([])
 
+  const [detailModal, setDetailModal] = useState(false)
+  const [selectedProjectId, setSelectedProjectId] = useState(null)
 
+  const handleViewDetail = (projectId) => {
+    setSelectedProjectId(projectId)
+    setDetailModal(true)
+  }
   const user = JSON.parse(localStorage.getItem('user') || '{}')
 
   useEffect(() => { load() }, [])
@@ -36,11 +44,12 @@ function ProjectPage() {
       setEntityProjects(res.data.filter(p => p.type === 'entity' && p.status === 'approved'))
     } catch (e) { message.error('加载失败') }
     setLoading(false)
+  }
 
   // 添加付款计划
-  }
-  }
+  const addPaymentPlan = () => {
     setPaymentPlans([...paymentPlans, { batch_no: paymentPlans.length + 1, planned_date: null, amount: 0, plan_ratio: 0 }])
+  }
 
   // 删除付款计划
   const removePaymentPlan = (index) => {
@@ -62,6 +71,7 @@ function ProjectPage() {
     } catch (e) {
       message.error(e.response?.data?.error || '创建失败')
     }
+  }
 
   // 创建虚拟项目
   const handleVirtualSubmit = async () => {
@@ -76,8 +86,13 @@ function ProjectPage() {
     } catch (e) {
       message.error(e.response?.data?.error || '创建失败')
     }
+  }
 
   // 查看项目详情
+  const handleViewDetail = (projectId) => {
+    setSelectedProjectId(projectId)
+    setDetailModal(true)
+  }
 
   // 项目中止
   const handleSuspend = async () => {
@@ -90,6 +105,7 @@ function ProjectPage() {
     } catch (e) {
       message.error(e.response?.data?.error || '操作失败')
     }
+  }
 
   // 虚拟转实体
   const handleConvert = async () => {
@@ -102,6 +118,7 @@ function ProjectPage() {
     } catch (e) {
       message.error(e.response?.data?.error || '操作失败')
     }
+  }
 
   const columns = [
     { title: '项目编号', dataIndex: 'code', width: 130, render: (v, r) => (
