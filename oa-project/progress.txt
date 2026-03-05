@@ -386,3 +386,29 @@ module.exports = router;
   - start_application: 开工申请
 
 ================================================================================
+
+================================================================================
+2026-03-05 18:10 [全能大龙虾] TASK-103 完成
+================================================================================
+✅ 完成内容：
+  [x] 设计进度监控API（答疑文件+电子看板）
+  [x] 施工进度监控API（里程碑进度条）
+  [x] 进度纠偏提醒（微信通知预留）
+  [x] 与对账单弱相关校验
+  [x] 与劳务提报强相关校验
+
+✅ API端点：
+  - GET /api/progress/design/files
+  - POST /api/progress/design/files
+  - GET /api/progress/design/dashboard
+  - PUT /api/progress/design/progress
+  - GET /api/progress/construction/dashboard
+  - PUT /api/progress/construction/progress
+  - POST /api/progress/validate/statement
+  - POST /api/progress/validate/labor
+
+✅ 业务规则：
+  - 产值占比 < 施工进度: 黄色预警
+  - 申请产值 > 施工进度: 红色锁定（无法提交）
+
+================================================================================
