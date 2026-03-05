@@ -8,7 +8,7 @@ const path = require('path');
 const multer = require('multer');
 const XLSX = require('xlsx');
 const router = express.Router();
-const db = new Database(path.join(__dirname, '../../data/oa.db'));
+const db = new Database(path.join(__dirname, '../../../data/oa.db'));
 
 // 配置文件上传
 const upload = multer({ dest: 'uploads/' });

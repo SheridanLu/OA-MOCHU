@@ -6,7 +6,7 @@ const express = require('express');
 const Database = require('better-sqlite3');
 const path = require('path');
 const router = express.Router();
-const db = new Database(path.join(__dirname, '../../data/oa.db'));
+const db = new Database(path.join(__dirname, '../../../data/oa.db'));
 
 // 生成报告编号
 function generateReportNo() {
