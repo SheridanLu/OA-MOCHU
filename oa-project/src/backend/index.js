@@ -43,6 +43,7 @@ app.use('/api/salary', require('./routes/salary'));
 app.use('/api/dashboard', require('./routes/dashboard'));
 app.use('/api/completion', require('./routes/completion'));
 app.use('/api/assets', require('./routes/assets'));
+app.use('/api/permissions', require('./routes/permissions'));
 app.use('/api/expenses', require('./routes/expenses'));
 app.use('/api/social-insurance', require('./routes/social-insurance'));
 
