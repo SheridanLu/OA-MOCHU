@@ -17,13 +17,7 @@ router.get('/:id/overview', (req, res) => {
     
     // 1. 项目基本信息
     const project = db.prepare(`
-      SELECT p.*,
-        d.name as department_name,
-        u.name as creator_name
-      FROM projects p
-      LEFT JOIN departments d ON p.department_id = d.id
-      LEFT JOIN users u ON p.created_by = u.id
-      WHERE p.id = ?
+      SELECT * FROM projects WHERE id = ?
     `).get(id);
     
     if (!project) {
@@ -112,8 +106,8 @@ router.get('/:id/overview', (req, res) => {
     const materials = db.prepare(`
       SELECT
         COUNT(*) as total_transactions,
-        SUM(CASE WHEN transaction_type = 'in' THEN quantity ELSE 0 END) as total_in,
-        SUM(CASE WHEN transaction_type = 'out' THEN quantity ELSE 0 END) as total_out
+        SUM(CASE WHEN type = 'in' THEN quantity ELSE 0 END) as total_in,
+        SUM(CASE WHEN type = 'out' THEN quantity ELSE 0 END) as total_out
       FROM material_transactions
       WHERE project_id = ?
     `).get(id);
@@ -130,17 +124,17 @@ router.get('/:id/overview', (req, res) => {
     const overview = {
       project,
       statistics: {
-        contracts: contractStats,
+        contracts: contractStats || {},
         budgets: { count: budgets.length, latest: budgets[0] },
-        purchase: purchaseList,
+        purchase: purchaseList || {},
         progress: {
           design: progress.find(p => p.type === 'design') || {},
           construction: progress.find(p => p.type === 'construction') || {}
         },
-        labor: laborReports,
-        changes: changeRequests,
-        statements: statements,
-        materials: materials
+        labor: laborReports || {},
+        changes: changeRequests || [],
+        statements: statements || {},
+        materials: materials || {}
       },
       details: {
         contracts: contracts.slice(0, 5),
@@ -170,8 +164,7 @@ router.get('/:id/contracts', (req, res) => {
     const { type } = req.query;
     
     let sql = `
-      SELECT c.*,
-        (SELECT SUM(amount) FROM payment_applications WHERE contract_id = c.id) as paid_amount
+      SELECT c.*
       FROM contracts c
       WHERE c.project_id = ?
     `;
@@ -212,9 +205,8 @@ router.get('/:id/progress', (req, res) => {
     `).get(id);
     
     const milestones = db.prepare(`
-      SELECT m.*, u.name as responsible_name
+      SELECT m.*
       FROM project_milestones m
-      LEFT JOIN users u ON m.responsible_user_id = u.id
       WHERE m.project_id = ?
       ORDER BY m.planned_start_date
     `).all(id);
@@ -244,8 +236,7 @@ router.get('/:id/finance', (req, res) => {
     const income = db.prepare(`
       SELECT
         COUNT(*) as contract_count,
-        SUM(amount) as total_amount,
-        SUM((SELECT COALESCE(SUM(amount),0) FROM payment_applications WHERE contract_id = contracts.id)) as received_amount
+        SUM(amount) as total_amount
       FROM contracts
       WHERE project_id = ? AND type = 'income'
     `).get(id);
@@ -254,8 +245,7 @@ router.get('/:id/finance', (req, res) => {
     const expense = db.prepare(`
       SELECT
         COUNT(*) as contract_count,
-        SUM(amount) as total_amount,
-        SUM((SELECT COALESCE(SUM(amount),0) FROM payment_applications WHERE contract_id = contracts.id)) as paid_amount
+        SUM(amount) as total_amount
       FROM contracts
       WHERE project_id = ? AND type = 'expense'
     `).get(id);
@@ -271,23 +261,19 @@ router.get('/:id/finance', (req, res) => {
     const materials = db.prepare(`
       SELECT SUM(total_amount) as total_amount
       FROM material_transactions
-      WHERE project_id = ? AND transaction_type = 'in'
+      WHERE project_id = ? AND type = 'in'
     `).get(id);
     
     res.json({
       success: true,
       data: {
-        income,
-        expense,
-        labor,
-        materials,
+        income: income || {},
+        expense: expense || {},
+        labor: labor || {},
+        materials: materials || {},
         summary: {
-          total_income: income.total_amount || 0,
-          received: income.received_amount || 0,
-          total_expense: (expense.total_amount || 0) + (labor.total_amount || 0) + (materials.total_amount || 0),
-          paid: expense.paid_amount || 0,
-          receivable: (income.total_amount || 0) - (income.received_amount || 0),
-          payable: (expense.total_amount || 0) - (expense.paid_amount || 0)
+          total_income: income?.total_amount || 0,
+          total_expense: (expense?.total_amount || 0) + (labor?.total_amount || 0) + (materials?.total_amount || 0)
         }
       }
     });
