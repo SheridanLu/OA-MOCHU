@@ -38,12 +38,14 @@ function ProjectPage() {
     setLoading(false)
 
   // 添加付款计划
-  const addPaymentPlan = () => {
+  }
+  }
     setPaymentPlans([...paymentPlans, { batch_no: paymentPlans.length + 1, planned_date: null, amount: 0, plan_ratio: 0 }])
 
   // 删除付款计划
   const removePaymentPlan = (index) => {
     setPaymentPlans(paymentPlans.filter((_, i) => i !== index))
+  }
 
   // 创建实体项目
   const handleEntitySubmit = async () => {
