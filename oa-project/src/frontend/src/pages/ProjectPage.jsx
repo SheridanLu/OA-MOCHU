@@ -133,8 +133,16 @@ function ProjectPage() {
       const colors = { pending: 'orange', approved: 'green', suspended: 'default', converting: 'blue' }
       return <Tag color={colors[v]}>{map[v] || v}</Tag>
     }},
-    { title: '操作', width: 200, render: (_, r) => (
+    { title: '操作', width: 280, render: (_, r) => (
       <Space size="small">
+        <Button 
+          size="small" 
+          type="link" 
+          icon={<EyeOutlined />} 
+          onClick={() => handleViewDetail(r.id)}
+        >
+          详情
+        </Button>
         {r.type === 'virtual' && r.status === 'approved' && (
           <>
             <Button size="small" onClick={() => { setCurrentProject(r); convertForm.resetFields(); setConvertModal(true) }}>转实体</Button>
@@ -390,6 +398,18 @@ function ProjectPage() {
           </Form.Item>
         </Form>
       </Modal>
+    </div>
+  )
+}
+
+export default ProjectPage
+
+      {/* 项目详情弹窗 */}
+      <ProjectDetailModal
+        visible={detailModal}
+        projectId={selectedProjectId}
+        onClose={() => setDetailModal(false)}
+      />
     </div>
   )
 }
