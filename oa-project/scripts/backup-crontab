@@ -1,0 +1,9 @@
+# OA系统数据库自动备份定时任务
+# 每天凌晨2点执行每日备份
+0 2 * * * /root/.openclaw/workspace/oa-project/scripts/backup-database.sh daily >> /root/.openclaw/workspace/oa-project/backups/backup.log 2>&1
+
+# 每周日凌晨3点执行每周备份
+0 3 * * 0 /root/.openclaw/workspace/oa-project/scripts/backup-database.sh weekly >> /root/.openclaw/workspace/oa-project/backups/backup.log 2>&1
+
+# 每月1号凌晨4点执行每月备份
+0 4 1 * * /root/.openclaw/workspace/oa-project/scripts/backup-database.sh monthly >> /root/.openclaw/workspace/oa-project/backups/backup.log 2>&1
